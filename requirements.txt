@@ -1,6 +1,6 @@
 joblib==1.5.2
 numpy==2.5.3
-packaging==26.3
+packaging==25.0
 pandas==3.0.6
 panel==1.9.4
 pyvi==0.1.1
