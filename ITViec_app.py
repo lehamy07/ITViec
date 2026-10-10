@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import joblib
 import numpy as np
@@ -253,7 +252,7 @@ st.markdown("""
         border-radius: 8px;
     }
 </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)  
 
 # =========================================================
 # 2. LOAD MODEL
@@ -490,7 +489,7 @@ def display_company_card(row):
         st.subheader(title)
 
         if pd.notna(similarity):
-            st.caption(f"Độ tương đồng: {similarity:.2f}%")
+            st.caption(f"Điểm tương đồng: {similarity:.1f}/100")
 
         columns = st.columns(4)
         
@@ -520,13 +519,22 @@ def display_company_card(row):
 # 7. Hàm chức năng REVIEW CLASSIFICATION
 # =========================================================
 
+# RATING_FIELDS = [
+#     ("Overall Rating", "review_rating", "Đánh giá tổng thể"),
+#     ("Salary & Benefits", "review_salary", "Lương và phúc lợi"),
+#     ("Training & Learning", "review_training", "Đào tạo và phát triển"),
+#     ("Management cares about me", "review_management", "Sự hỗ trợ từ quản lý"),
+#     ("Culture & Work Environment", "review_culture", "Văn hóa và môi trường"),
+#     ("Office & Workspace", "review_workspace", "Không gian làm việc"),
+# ]
+
 RATING_FIELDS = [
-    ("Overall Rating", "review_rating", "Đánh giá tổng thể"),
-    ("Salary & Benefits", "review_salary", "Lương và phúc lợi"),
-    ("Training & Learning", "review_training", "Đào tạo và phát triển"),
-    ("Management Support", "review_management", "Sự hỗ trợ từ quản lý"),
-    ("Culture & Work Environment", "review_culture", "Văn hóa và môi trường"),
-    ("Office & Workspace", "review_workspace", "Không gian làm việc"),
+    ("Overall Rating", "review_rating", "Mức độ hài lòng chung"),
+    ("Salary & Benefits", "review_salary", "Thu nhập, thưởng và chế độ đãi ngộ"),
+    ("Training & Learning", "review_training", "Cơ hội phát triển kỹ năng"),
+    ("Management cares about me", "review_management", "Hỗ trợ và ghi nhận từ cấp trên"),
+    ("Culture & Work Environment", "review_culture", "Đồng nghiệp và hoạt động nội bộ"),
+    ("Office & Workspace", "review_workspace", "Không gian và điều kiện làm việc"),
 ]
 
 
@@ -545,7 +553,7 @@ def rating_card(label, key, description, default=4):
             st.button(
                 str(score),
                 key=f"{key}_btn_{score}",
-                use_container_width=True,
+                width=True,
                 type=("primary" if st.session_state[key] == score else "secondary"),
                 on_click=lambda k=key, s=score: st.session_state.update({k: s}),
             )
@@ -556,20 +564,37 @@ def rating_card(label, key, description, default=4):
 
 def render_review_classification(company_name, company):
     """Thu thập review và thực hiện dự đoán."""
-    st.subheader("Review Classification")
+    st.subheader("Phân loại đánh giá")
 
     st.write("Nhập nội dung đánh giá")
 
     rating_values = {}
 
-    cols = st.columns(3, gap="large")
+    # cols = st.columns(3, gap="large")
+
+    # for index, (label, key, description) in enumerate(RATING_FIELDS):
+    #     with cols[index % 3]:
+    #         rating_values[key] = rating_card(label, key, description)
+
+    cols = st.columns(3, gap="medium")
 
     for index, (label, key, description) in enumerate(RATING_FIELDS):
         with cols[index % 3]:
-            rating_values[key] = rating_card(label, key, description)
+            with st.container(border=True):
+                st.markdown(f"**{label}**")
+                st.caption(description)
+
+                rating_values[key] = st.radio(
+                    "Điểm đánh giá",
+                    options=[1, 2, 3, 4, 5],
+                    horizontal=True,
+                    index=None,
+                    key=f"rating_{key}",
+                    label_visibility="collapsed",
+                )
 
     title = st.text_input(
-        "Tiêu đề đánh giá",
+        "Tiêu đề",
         placeholder="Ví dụ: Môi trường làm việc tốt",
         key="review_title",
     )
@@ -591,7 +616,7 @@ def render_review_classification(company_name, company):
     if not st.button(
         "Đánh giá",
         type="primary",
-        use_container_width=True,
+        width="stretch",
         key="classify_review",
     ):
         return
@@ -651,28 +676,26 @@ def render_review_classification(company_name, company):
         st.error("NOT RECOMMEND")
         st.write(f"Review có xu hướng không giới thiệu {company_name}.")
 
-    cols = st.columns(2)
+    # cols = st.columns(2)
 
-    with cols[0]:
-        st.metric("Recommend", f"{prob_class1 * 100:.1f}%")
-        st.progress(float(np.clip(prob_class1, 0, 1)))
+    # with cols[0]:
+    #     st.metric("Recommend", f"{prob_class1 * 100:.1f}%")
+    #     st.progress(float(np.clip(prob_class1, 0, 1)))
 
-    with cols[1]:
-        st.metric("Not Recommend", f"{prob_class0 * 100:.1f}%")
-        st.progress(float(np.clip(prob_class0, 0, 1)))
+    # with cols[1]:
+    #     st.metric("Not Recommend", f"{prob_class0 * 100:.1f}%")
+    #     st.progress(float(np.clip(prob_class0, 0, 1)))
         
 
 def render_employee_insights(company_id):
-    """Hiển thị thống kê đánh giá của nhân viên."""
-    st.subheader("Employee Insights")
+    """Hiển thị thống kê đánh giá của công ty."""
+    st.subheader("Tổng quan đánh giá")
 
     if "id" not in overview_reviews.columns:
         st.warning("Dữ liệu Overview_Reviews thiếu cột 'id'.")
         return
 
-    review_stats = overview_reviews[
-        overview_reviews["id"] == company_id
-    ]
+    review_stats = overview_reviews[overview_reviews["id"] == company_id]
 
     if review_stats.empty:
         st.info("Chưa có dữ liệu đánh giá cho công ty này.")
@@ -680,18 +703,14 @@ def render_employee_insights(company_id):
 
     stats = review_stats.iloc[0]
 
-    number_reviews = pd.to_numeric(
-        stats.get("Number of reviews"), errors="coerce"
-    )
-
+    number_reviews = pd.to_numeric(stats.get("Number of reviews"), errors="coerce")
+    
     if pd.notna(number_reviews) and number_reviews > 0:
         st.caption(f"Số lượng đánh giá: {int(number_reviews)}")
     else:
         st.caption("Số lượng đánh giá: Chưa có dữ liệu")
 
-    overall_rating = pd.to_numeric(
-        stats.get("Overall rating"), errors="coerce"
-    )
+    overall_rating = pd.to_numeric(stats.get("Overall rating"), errors="coerce")
 
     if pd.isna(overall_rating) or overall_rating <= 0:
         st.info("Chưa có thông tin điểm đánh giá.")
@@ -702,7 +721,7 @@ def render_employee_insights(company_id):
         ("Đào tạo & học tập", "Training & learning"),
         ("Quan tâm từ quản lý", "Management cares about me"),
         ("Văn hóa & giải trí", "Culture & fun"),
-        ("Văn phòng", "Office & workspace"),
+        ("Môi trường làm việc", "Office & workspace"),
     ]
 
     cols = st.columns(5)
@@ -716,7 +735,7 @@ def render_employee_insights(company_id):
             else:
                 st.metric(label, "N/A")
 
-    st.markdown("**Khả năng giới thiệu công ty**")
+    # st.markdown("**Khả năng giới thiệu công ty**")
 
     recommend_value = stats.get("Recommend working here to a friend")
 
@@ -816,7 +835,7 @@ if menu == "Trang chủ":
     )
     
     # Hiển thị banner
-    st.image(BANNER_PATH, use_container_width=True)
+    st.image(BANNER_PATH, width="stretch")
     
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -873,7 +892,7 @@ if menu == "Trang chủ":
                 "Khám phá công ty",
                 key="home_recommend_button",
                 type="primary",
-                use_container_width=True,
+                width="stretch",
             ):
                 st.session_state["home_navigation"] = (
                     "Company Recommendation"
@@ -901,9 +920,9 @@ if menu == "Trang chủ":
             st.subheader("Company Review")
 
             st.write(
-                "Theo dõi điểm đánh giá của nhân viên, "
-                "xem thông tin doanh nghiệp và dự đoán "
-                "xu hướng Recommend hoặc Not Recommend."
+                "Xem thông tin cơ bản về công ty, "
+                "các chỉ số đánh giá từ nhân viên "
+                "xu hướng của đánh giá (Recommend hoặc Not Recommend)."
             )
 
             st.markdown(
@@ -923,7 +942,7 @@ if menu == "Trang chủ":
                 "Xem đánh giá",
                 key="home_review_button",
                 type="primary",
-                use_container_width=True,
+                width="stretch",
             ):
                 st.session_state["home_navigation"] = (
                     "Company Review"
@@ -1010,7 +1029,7 @@ elif menu == "Company Recommendation":
         if st.button(
             "Tìm công ty phù hợp",
             type="primary",
-            use_container_width=True,
+            width="stretch",
             key="recommend_by_content_button",
         ):
             if not user_input.strip():
@@ -1060,7 +1079,7 @@ elif menu == "Company Recommendation":
         if st.button(
             "Tìm công ty tương tự",
             type="primary",
-            use_container_width=True,
+            width="stretch",
             key="recommend_by_company_button",
         ):
             result = recommend_similar_company(
@@ -1086,7 +1105,7 @@ elif menu == "Company Recommendation":
 
 elif menu == "Company Review":
     st.title("Company Review & Classification")
-    st.caption("Xem thông tin tổng quan, các chỉ số đánh giá của nhân viên và thực hiện đánh giá công ty.")
+    st.caption("Xem thông tin cơ bản về công ty, các chỉ số đánh giá từ nhân viên và thực hiện đánh giá công ty.")
     st.divider()
 
     selected_company = st.selectbox(
@@ -1127,23 +1146,29 @@ elif menu == "Giới thiệu dự án":
     with st.container(border=True):
         st.subheader("1. Company Recommendation")
         st.write(
-            "Sử dụng Content-Based Recommendation, TF-IDF "
-            "và Cosine Similarity để tìm các công ty có nội dung tương đồng."
+            "Sử dụng phương pháp Content-Based Recommendation "
+            "dựa trên TF-IDF và Cosine Similarity để tìm các công ty có nội dung tương đồng."
         )
-
+  
     with st.container(border=True):
         st.subheader("2. Review Classification")
         st.write(
             "Sử dụng Logistic Regression để dự đoán xu hướng "
             "Recommend hoặc Not Recommend từ nội dung và điểm đánh giá."
         )
+        st.write(
+            "Đây là mô hình tốt nhất sau khi thử nghiệm trên 4 mô hình: "
+            "Logistic Regression, Linear SVM, KNN, Random Forest ở môi trường Scikit-Learn."                    
+        )
         st.caption(
             f"Ngưỡng xác suất Class 0 đang sử dụng: {clf_threshold:.2f}"
         )
+        st.caption(
+            "Mô hình Logistic Regression * Precision: 0.7938 * Recall: 0.8213 * F1-Score: 0.7681 *"
+        )
 
     st.info(
-        "Kết quả phân loại là dự đoán của mô hình, không thay thế "
-        "việc đánh giá thực tế về môi trường làm việc."
+        "Kết quả phân loại là dự đoán của mô hình"
     )
 
 # =========================================================
