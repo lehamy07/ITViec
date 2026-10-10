@@ -768,6 +768,7 @@ with st.sidebar:
     st.title("💼 IT Company")
     st.caption("Recommender & Insights")
     st.divider()
+    
     st.markdown("""
     <style>
     [data-testid="stSidebar"] {
@@ -780,6 +781,7 @@ with st.sidebar:
     }
     </style>
     """, unsafe_allow_html=True)
+    
     menu_options = [
         "Trang chủ",
         "Company Recommendation",
