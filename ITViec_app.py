@@ -768,7 +768,18 @@ with st.sidebar:
     st.title("💼 IT Company")
     st.caption("Recommender & Insights")
     st.divider()
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: #E6F2FC;
+        opacity: 1;
+    }
 
+    [data-testid="stSidebar"] * {
+        color: #191a1c;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     menu_options = [
         "Trang chủ",
         "Company Recommendation",
