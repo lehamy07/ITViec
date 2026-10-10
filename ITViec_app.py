@@ -94,7 +94,7 @@ st.markdown("""
        5. SIDEBAR
     =============================== */
     [data-testid="stSidebar"] {
-        background-color: #F8FAFC;
+        background-color: #E6F2FC;
         border-right: 1px solid #E2E8F0;
     }
 
@@ -136,7 +136,7 @@ st.markdown("""
 
     /* Nút chính */
     .stButton > button[kind="primary"] {
-        background-color: #F8FAFC !important;
+        background-color: #E6F2FC !important;
         border: 1px solid #2563EB !important;
         color: #FFFFFF !important;
     }
@@ -768,23 +768,7 @@ with st.sidebar:
     st.title("💼 IT Company")
     st.caption("Recommender & Insights")
     st.divider()
-    
-    st.markdown("""
-    <style>
-    [data-testid="stSidebar"] {
-        background-color: #E6F2FC;
-    }
 
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3 {
-        color: #191a1c;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
     menu_options = [
         "Trang chủ",
         "Company Recommendation",
