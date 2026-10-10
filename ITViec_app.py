@@ -588,7 +588,7 @@ def render_review_classification(company_name, company):
                     "Điểm đánh giá",
                     options=[1, 2, 3, 4, 5],
                     horizontal=True,
-                    index=None,
+                    index=3,
                     key=f"rating_{key}",
                     label_visibility="collapsed",
                 )
