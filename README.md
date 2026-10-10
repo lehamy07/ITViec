@@ -51,7 +51,6 @@ Project 2/
 │   ├── Reviews_Cleaned.csv               # Dữ liệu 8,417 review đã tiền xử lý NLP tiếng Việt & ghép thuộc tính
 │   ├── Overview_Reviews.xlsx             # Dữ liệu gốc bảng tổng hợp đánh giá cấp độ công ty
 │   ├── english-vnmese.txt                # Từ điển dịch tiếng Anh sang tiếng Việt
-│   └── vietnamese_texts_translated.json  # Bản dịch tiếng Anh cho dữ liệu công ty Bài 1
 │
 ├── ITviec_models1
 │   ├── company_recommender_bundle.joblib # Gói mô hình gợi ý tích hợp Bài 1 (TF-IDF + Matrix + Data)
