@@ -773,10 +773,13 @@ with st.sidebar:
     <style>
     [data-testid="stSidebar"] {
         background-color: #E6F2FC;
-        opacity: 1;
     }
 
-    [data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
         color: #191a1c;
     }
     </style>
