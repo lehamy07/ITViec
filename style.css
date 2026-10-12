@@ -223,46 +223,20 @@ p, li {
    KÍCH THƯỚC NGÔI SAO ĐÁNH GIÁ (ST.FEEDBACK)
    ===================================================== */
 
-[data-testid="stFeedback"] {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-}
-
-[data-testid="stFeedback"] button {
-    min-height: unset !important;
-    height: auto !important;
-    padding: 2px 4px !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    cursor: pointer !important;
-}
-
-[data-testid="stFeedback"] button:hover {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-[data-testid="stFeedback"] button svg {
+/* Phóng to toàn bộ ngôi sao của st.feedback */
+[data-testid="stButtonGroup"] button span,
+.stButtonGroup button span,
+[data-testid="stButtonGroup"] button svg {
+    font-size: 30px !important;    /* Tăng font-size cho biểu tượng sao */
     width: 30px !important;
     height: 30px !important;
-    transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    line-height: 1 !important;
 }
 
-/* Kích thước sao 5 khía cạnh */
-[data-testid="stFeedback"] button svg {
-    width: 30px !important;
-    height: 30px !important;
-    transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-[data-testid="stFeedback"] button:hover svg {
-    transform: scale(1.25) !important;
-}
-/* Kích thước sao Đánh giá tổng quan nổi bật */
-.stApp .st-key-overall_star_container [data-testid="stFeedback"] button svg {
+/* Riêng phần Đánh giá tổng quan: cho to nổi bật 36px */
+.stApp .st-key-overall_star_container [data-testid="stButtonGroup"] button span,
+.stApp .st-key-overall_star_container .stButtonGroup button span {
+    font-size: 36px !important;
     width: 36px !important;
     height: 36px !important;
 }
