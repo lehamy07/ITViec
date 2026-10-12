@@ -636,7 +636,6 @@ with st.sidebar:
     </div>
     <div style="margin-bottom: 16px;">
         <span class="itv-badge itv-badge-green">● Hệ thống hoạt động</span>
-        <span class="itv-badge" style="margin-left: 4px;">{len(companies_df)} Công ty</span>
     </div>
     """, unsafe_allow_html=True)
     
