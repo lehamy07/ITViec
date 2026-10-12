@@ -614,7 +614,7 @@ def render_review_classification(company_name, company):
 PAGES = [
     "🏠 Trang chủ",
     "🎯 Tìm công ty tương đồng",
-    "📊 Dự đoán mức độ phù hợp",
+    "📊 Dự đoán đánh giá",
     "ℹ️ Giới thiệu dự án",
 ]
 
