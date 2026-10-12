@@ -703,7 +703,7 @@ if selected_menu == "🏠 Trang chủ":
         <div class="home-hero-stats">
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{len(companies_df):,}</div>
-                <div class="home-hero-stat-label">Công ty IT</div>
+                <div class="home-hero-stat-label">Công ty</div>
             </div>
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{total_reviews_count:,}</div>
