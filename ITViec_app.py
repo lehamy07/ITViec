@@ -640,7 +640,7 @@ with st.sidebar:
     </div>
     <div style="margin-bottom: 16px;">
         <span class="itv-badge itv-badge-green">● Hệ thống hoạt động</span>
-        <span class="itv-badge" style="margin-left: 4px;">{len(companies_df)} Công ty</span>
+        # <span class="itv-badge" style="margin-left: 4px;">{len(companies_df)} Công ty</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -687,7 +687,7 @@ if selected_menu == "🏠 Trang chủ":
         st.markdown("""
         <div class="home-hero-content">
             <div class="home-hero-eyebrow">✦ &nbsp; ĐỒ ÁN · DL07 · DỮ LIỆU ITViec</div>
-            <h1 class="home-hero-title">Tìm đúng công ty.<br><span>Hiểu đúng môi trường.</span></h1>
+            <h1 class="home-hero-title">Tìm đúng công ty<br><span>Hiểu đúng môi trường</span></h1>
             <p class="home-hero-description">
                 Khám phá các công ty phù hợp và tìm hiểu trải nghiệm của nhân viên qua phân tích dữ liệu chuyên sâu.
             </p>
@@ -701,14 +701,14 @@ if selected_menu == "🏠 Trang chủ":
                 st.rerun()
         with cta_right:
             if st.button("Phân tích đánh giá →", key="home_hero_btn_review", use_container_width=True):
-                st.session_state["nav_target"] = "📊 Dự đoán mức độ phù hợp"
+                st.session_state["nav_target"] = "📊 Dự đoán đánh giá"
                 st.rerun()
 
         st.markdown(f"""
         <div class="home-hero-stats">
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{len(companies_df):,}</div>
-                <div class="home-hero-stat-label">Công ty IT</div>
+                <div class="home-hero-stat-label">Công ty</div>
             </div>
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{total_reviews_count:,}</div>
@@ -762,7 +762,7 @@ if selected_menu == "🏠 Trang chủ":
             """, unsafe_allow_html=True)
 
             # if st.button("Xem đánh giá & Thử nghiệm →", key="home_btn_rev", type="primary", width="content"):
-            #     st.session_state["nav_target"] = "📊 Dự đoán mức độ phù hợp"
+            #     st.session_state["nav_target"] = "📊 Dự đoán đánh giá"
             #     st.rerun()
 
 
@@ -890,13 +890,13 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
                     display_company_card(row)
 
 # =========================================================
-# 9. TRANG 3: DỰ ĐOÁN MỨC ĐỘ PHÙ HỢP & SENTIMENT AI
+# 9. TRANG 3: DỰ ĐOÁN ĐÁNH GIÁ & SENTIMENT AI
 # =========================================================
 
-elif selected_menu == "📊 Dự đoán mức độ phù hợp":
+elif selected_menu == "📊 Dự đoán đánh giá":
     st.markdown("""
     <div class="itv-hero-badge">📊 Company Review & Sentiment</div>
-    <h1 style="margin-bottom: 6px;">Đánh Giá Công Ty & Dự Đoán Xu Hướng AI</h1>
+    <h1 style="margin-bottom: 6px;">Đánh Giá Công Ty & Dự Đoán Xu Hướng</h1>
     <p style="color: #475569; font-size: 0.95rem; margin-bottom: 20px;">
         Tra cứu hồ sơ công ty, đánh giá từ nhân viên và dự đoán đánh giá có xu hướng <strong>Recommend</strong> hay <strong>Not Recommend</strong>.
     </p>
