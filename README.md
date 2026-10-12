@@ -64,6 +64,7 @@ Project 2/
 ├── requirements.txt                      # Danh sách thư viện Python (Scikit-Learn, PyVi, Imblearn, Streamlit,...)
 ├── Procfile
 ├── setup.sh
+├── style.css
 └── README.md                             # Tài liệu tổng quan và hướng dẫn vận hành chi tiết
 
 ```
