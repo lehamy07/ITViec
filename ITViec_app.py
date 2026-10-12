@@ -902,7 +902,7 @@ elif selected_menu == "📊 Dự đoán đánh giá":
     """, unsafe_allow_html=True)
 
     with st.container(border=True):
-        col_label, col_sel = st.columns([1, 3], vertical_alignment="center")
+        col_label, col_sel, _ = st.columns([0.9, 2.8, 4], vertical_alignment="center")
         with col_label:
             st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #1E293B;'>Chọn công ty</div>", unsafe_allow_html=True)
 
