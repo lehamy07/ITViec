@@ -406,7 +406,7 @@ def render_review_classification(company_name, company):
     c_row1_l, c_row1_r = st.columns([1, 1], gap="medium")
         
     with c_row1_l:
-        with st.container(border=True):
+        with st.container(border=True, key="review_rating_panel"):
             st.markdown("<div style='font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>⭐ Đánh giá & Xếp hạng</div>", unsafe_allow_html=True)
             st.markdown("<hr style='margin: 12px 0 16px 0; border-color: #E2E8F0;'>", unsafe_allow_html=True)
             
@@ -457,7 +457,7 @@ def render_review_classification(company_name, company):
             
 
     with c_row1_r:
-        with st.container(border=True):
+        with st.container(border=True, key="review_content_panel"):
             st.markdown("<div style='font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>📝 Nội dung nhận xét</div>", unsafe_allow_html=True)
             st.markdown("<hr style='margin: 12px 0 16px 0; border-color: #E2E8F0;'>", unsafe_allow_html=True)
             st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>📌 Tiêu đề đánh giá </div>", unsafe_allow_html=True)
@@ -695,11 +695,11 @@ if selected_menu == "🏠 Trang chủ":
 
         cta_left, cta_right = st.columns(2, gap="medium")
         with cta_left:
-            if st.button("Gợi ý công ty →", key="home_hero_btn_rec", type="primary", use_container_width=True):
+            if st.button("Gợi ý công ty →", key="home_hero_btn_rec", type="primary", width="stretch"):
                 st.session_state["nav_target"] = "🎯 Tìm công ty tương đồng"
                 st.rerun()
         with cta_right:
-            if st.button("Phân tích đánh giá →", key="home_hero_btn_review", use_container_width=True):
+            if st.button("Phân tích đánh giá →", key="home_hero_btn_review", width="stretch"):
                 st.session_state["nav_target"] = "📊 Dự đoán đánh giá"
                 st.rerun()
 
@@ -721,7 +721,7 @@ if selected_menu == "🏠 Trang chủ":
 
 
     with col_f1:
-        with st.container(border=True):
+        with st.container(border=True, key="feature_company_recommendation"):
             st.markdown("""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <span class="itv-badge itv-badge-blue">TÍNH NĂNG 01</span>
@@ -744,7 +744,7 @@ if selected_menu == "🏠 Trang chủ":
             #     st.rerun()
 
     with col_f2:
-        with st.container(border=True):
+        with st.container(border=True, key="feature_company_review"):
             st.markdown("""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <span class="itv-badge itv-badge-green">TÍNH NĂNG 02</span>
@@ -791,7 +791,7 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
         )
 
     if search_mode == "✨ Theo kỹ năng":
-        with st.container(border=True):
+        with st.container(border=True, key="recommend_search_panel"):
             col_input, col_num, col_btn = st.columns([4, 0.5, 1], vertical_alignment="bottom")
             
             with col_input:
@@ -805,7 +805,7 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
                 top_n = st.selectbox("Số lượng", options=[5, 10, 15], index=0, key="recommend_text_top_n")
             
             with col_btn:
-                search_btn = st.button("🔍 Tìm Kiếm", type="primary", use_container_width=True, key="btn_run_text_rec")
+                search_btn = st.button("🔍 Tìm Kiếm", type="primary", width="stretch", key="btn_run_text_rec")
 
             # Gợi ý nhanh dạng Chip Pill nhỏ gọn
             st.markdown("<div style='display: flex; align-items: center; gap: 8px; margin-top: 6px;'><span style='font-size: 0.8rem; color: #64748B; font-weight: 600;'>💡 Gợi ý nhanh:</span></div>", unsafe_allow_html=True)
@@ -851,7 +851,7 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
     elif search_mode == "🏢 Theo tên công ty":
         st.markdown("<div style='margin-bottom: 8px; font-size: 0.82rem; color: #64748B;'>💡 Hệ thống sẽ tìm các công ty có quy mô và đặc thù tương tự công ty bạn chọn.</div>", unsafe_allow_html=True)
 
-        with st.container(border=True):
+        with st.container(border=True, key="recommend_search_panel"):
             col_comp, col_num_c, col_btn_c = st.columns([4, 0.5, 1], vertical_alignment="bottom")
             with col_comp:
                 selected_company = st.selectbox(
@@ -862,7 +862,7 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
             with col_num_c:
                 top_n_comp = st.selectbox("Số lượng", options=[5, 10, 15], index=0, key="recommend_company_top_n")
             with col_btn_c:
-                run_comp_btn = st.button("🔎 Tìm công ty", type="primary", use_container_width=True, key="btn_run_comp_rec")
+                run_comp_btn = st.button("🔎 Tìm công ty", type="primary", width="stretch", key="btn_run_comp_rec")
 
             selected_id = name_to_id.get(selected_company)
             target_company = id_to_company.get(selected_id)
@@ -901,7 +901,7 @@ elif selected_menu == "📊 Dự đoán đánh giá":
     </p>
     """, unsafe_allow_html=True)
 
-    with st.container(border=True):
+    with st.container(border=True, key="classification_search_panel"):
         col_label, col_sel, _ = st.columns([0.9, 2.8, 4], vertical_alignment="center")
         with col_label:
             st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #1E293B;'>Chọn công ty</div>", unsafe_allow_html=True)
@@ -922,7 +922,6 @@ elif selected_menu == "📊 Dự đoán đánh giá":
 
     st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
     
-    # with st.container(border=True):
     render_review_classification(selected_company, company)
 
 
@@ -936,7 +935,7 @@ elif selected_menu == "ℹ️ Giới thiệu dự án":
     <h1 style="margin-bottom: 6px;">Giới Thiệu Dự Án</h1>
     """, unsafe_allow_html=True)
 
-    with st.container(border=True):
+    with st.container(border=True, key="about_project_goal"):
         st.subheader("🎯 Mục Tiêu Dự Án")
         st.write(
             "Xây dựng hệ thống hỗ trợ tìm kiếm, khám phá và đánh giá các công ty công nghệ dựa trên dữ liệu. "
@@ -944,7 +943,7 @@ elif selected_menu == "ℹ️ Giới thiệu dự án":
         )
 
 
-    with st.container(border=True):
+    with st.container(border=True, key="about_company_recommendation"):
         st.subheader("1. Company Recommendation")
         st.caption("Content-Based Filtering")
         st.write(
@@ -952,7 +951,7 @@ elif selected_menu == "ℹ️ Giới thiệu dự án":
             "Độ tương đồng giữa người dùng và các công ty được đo lường bằng **Cosine Similarity**, cho phép tìm kiếm nhanh và chính xác."
         )
 
-    with st.container(border=True):
+    with st.container(border=True, key="about_sentiment_classification"):
         st.subheader("2. Review Sentiment Classification")
         st.caption("Logistic Regression với Threshold Tuning")
         st.write(
@@ -964,7 +963,7 @@ elif selected_menu == "ℹ️ Giới thiệu dự án":
         - Ngưỡng kích hoạt Class 0: **{clf_threshold:.2f}** (tối ưu hóa phân phối mất cân bằng)
         """)
 
-    with st.container(border=True):
+    with st.container(border=True, key="about_model_performance"):
         st.subheader("📈 Hiệu Năng Mô Hình Phân Loại (Model Performance)")
         b1, b2, b3, b4 = st.columns(4)
         with b1:
