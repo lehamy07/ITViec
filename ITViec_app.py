@@ -13,7 +13,7 @@ from preprocessing import prepare_data, predict_with_class0_threshold
 # =========================================================
 
 st.set_page_config(
-    page_title="ITViec AI Recommender & Sentiment Insights",
+    page_title="ITViec Recommender & Sentiment Insights",
     page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -407,22 +407,26 @@ def render_review_classification(company_name, company):
         
     with c_row1_l:
         with st.container(border=True):
-            st.markdown("<div style='font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>⭐ Đánh Giá & Xếp hạng</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>⭐ Đánh giá & Xếp hạng</div>", unsafe_allow_html=True)
             st.markdown("<hr style='margin: 12px 0 16px 0; border-color: #E2E8F0;'>", unsafe_allow_html=True)
-            st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>🎯 Đánh giá tổng quan </div>", unsafe_allow_html=True)
-            st.markdown("<div style='margin-bottom: 4px;'></div>", unsafe_allow_html=True)
             
-            try:
-                with st.container(key="overall_star_container"):
-                    fb_val = st.feedback("stars", key="fb_overall")
-                rating_values["review_rating"] = (fb_val + 1) if fb_val is not None else 4
-            except Exception:
-                rating_values["review_rating"] = st.select_slider(
-                    "Overall", options=[1, 2, 3, 4, 5], value=4,
-                    format_func=lambda x: "★" * x + "☆" * (5 - x),
-                    key="slider_overall", label_visibility="collapsed"
-                )
-            st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>🎯 Chi Tiết 5 Khía Cạnh</div>", unsafe_allow_html=True)
+            lbl, star_icon = st.columns([1, 1.2], vertical_alignment="center")
+            with lbl:
+                st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>🎯 Đánh giá tổng quan </div>", unsafe_allow_html=True)
+            # st.markdown("<div style='margin-bottom: 4px;'></div>", unsafe_allow_html=True)
+            
+            with star_icon:
+                try:
+                    with st.container(key="overall_star_container"):
+                        fb_val = st.feedback("stars", key="fb_overall")
+                    rating_values["review_rating"] = (fb_val + 1) if fb_val is not None else 4
+                except Exception:
+                    rating_values["review_rating"] = st.select_slider(
+                        "Overall", options=[1, 2, 3, 4, 5], value=4,
+                        format_func=lambda x: "★" * x + "☆" * (5 - x),
+                        key="slider_overall", label_visibility="collapsed"
+                    )
+            st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 12px;'>🎯 Chi tiết 5 khía cạnh</div>", unsafe_allow_html=True)
             aspect_fields = [
                 ("Lương & Chế độ đãi ngộ", "review_salary"),
                 ("Cơ hội đào tạo & Phát triển", "review_training"),
@@ -448,7 +452,7 @@ def render_review_classification(company_name, company):
                             key=f"star_fallback_{key}",
                             label_visibility="collapsed"
                         )
-                st.markdown("<div style='margin-bottom: 4px;'></div>", unsafe_allow_html=True)
+                # st.markdown("<div style='margin-bottom: 4px;'></div>", unsafe_allow_html=True)
                 
             
 
@@ -468,7 +472,7 @@ def render_review_classification(company_name, company):
             liked = st.text_area(
                 "Điều bạn thích nhất tại công ty",
                 placeholder="Ví dụ: Đồng nghiệp nhiệt tình, sếp tâm lý, dự án công nghệ hay...",
-                height=110,
+                height=75,
                 key="review_liked",
                 label_visibility="collapsed"
             )
@@ -477,7 +481,7 @@ def render_review_classification(company_name, company):
             suggestions = st.text_area(
                 "Đề xuất cải thiện (Suggestions for improvement)",
                 placeholder="Ví dụ: Cần cân bằng chính sách OT, thời gian làm việc...",
-                height=110,
+                height=75,
                 key="review_suggest",
                 label_visibility="collapsed"
             )
@@ -636,6 +640,7 @@ with st.sidebar:
     </div>
     <div style="margin-bottom: 16px;">
         <span class="itv-badge itv-badge-green">● Hệ thống hoạt động</span>
+        <span class="itv-badge" style="margin-left: 4px;">{len(companies_df)} Công ty</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -703,7 +708,7 @@ if selected_menu == "🏠 Trang chủ":
         <div class="home-hero-stats">
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{len(companies_df):,}</div>
-                <div class="home-hero-stat-label">Công ty</div>
+                <div class="home-hero-stat-label">Công ty IT</div>
             </div>
             <div class="home-hero-stat">
                 <div class="home-hero-stat-value">{total_reviews_count:,}</div>
