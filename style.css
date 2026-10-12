@@ -219,6 +219,12 @@ p, li {
     transform: translateY(-1px) !important;
 }
 
+/* Chỉ tăng chữ hai nút CTA ở Hero */
+.stApp [class*="st-key-home_hero_btn_rec"] button p,
+.stApp [class*="st-key-home_hero_btn_review"] button p {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+}
 /* =====================================================
    KÍCH THƯỚC NGÔI SAO ĐÁNH GIÁ (ST.FEEDBACK)
    ===================================================== */
