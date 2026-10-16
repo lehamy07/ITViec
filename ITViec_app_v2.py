@@ -242,15 +242,29 @@ def render_company_overview_card(company):
             st.markdown(str(why_love).replace('\n', '<br>'), unsafe_allow_html=True)
 
 
-CHIP_CANDIDATES = ["Python", "Java", "React", "Data Analyst", "ReactJS", "Golang", "DevOps", "SQL", "AWS", ".NET", "PHP", "Android"]
+CHIP_CANDIDATES = ["Python", "Java", "React", "Data Analyst", "Golang", "DevOps", "SQL", "AWS"]
+
+
+def _in_vocab(text):
+    """True nếu ít nhất một token của `text` nằm trong từ vựng TF-IDF (cùng cách tách từ như lúc tìm kiếm)."""
+    vocab = vectorizer.vocabulary_
+    return any(t in vocab for t in vectorizer.build_analyzer()(text))
 
 
 @st.cache_data
-def valid_suggestion_chips():
-    """SỬA 8: ứng viên nút gợi ý nào có ÍT NHẤT một token nằm trong từ vựng TF-IDF thì mới được hiện."""
-    analyzer = vectorizer.build_analyzer()          # cùng cách tách từ/viết thường như lúc tìm kiếm
-    vocab = vectorizer.vocabulary_
-    return [c for c in CHIP_CANDIDATES if any(t in vocab for t in analyzer(c))]
+def valid_suggestion_chips(n=4):
+    """SỬA 8: các nút gợi ý nhanh luôn ra kết quả. Ưu tiên kỹ năng PHỔ BIẾN NHẤT trong dữ liệu công ty (có trong
+    từ vựng), rồi mới đến danh sách ứng viên cố định; nếu vẫn không có gì thì dùng nguyên danh sách ứng viên."""
+    counts = {}
+    for val in companies_df["Our key skills"].dropna():
+        for sk in parse_skills(val)[0]:
+            counts[sk] = counts.get(sk, 0) + 1
+    popular = [k for k, _ in sorted(counts.items(), key=lambda kv: -kv[1]) if len(k) > 1 and _in_vocab(k)]
+    chips = []
+    for c in popular[:10] + CHIP_CANDIDATES:
+        if c not in chips and _in_vocab(c):
+            chips.append(c)
+    return (chips or CHIP_CANDIDATES)[:n]
 
 
 def set_recommend_query(text):
