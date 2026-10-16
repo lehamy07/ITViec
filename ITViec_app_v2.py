@@ -638,10 +638,10 @@ def render_review_classification(company_name, company):
 # =========================================================
 
 PAGES = [
-    "Trang chủ",
-    "Tìm công ty tương đồng",
-    "Recommend / Non-Recommend",
-    "Giới thiệu dự án",
+    "🏠 Trang chủ",
+    "🎯 Tìm công ty tương đồng",
+    "📊 Dự đoán đánh giá",
+    "ℹ️ Giới thiệu dự án",
 ]
 
 with st.sidebar:
