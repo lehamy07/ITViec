@@ -508,8 +508,8 @@ def render_review_classification(company_name, company):
     # Tinh gọn: Truyền trực tiếp văn bản vào DataFrame để prepare_data() xử lý đúng 1 lần (Tránh double cleaning)
     review_input = pd.DataFrame([{
         "Company Name": company_name,
-        "Company Type": company_type,
-        "Overtime Policy": overtime_policy,
+        # "Company Type": company_type,
+        # "Overtime Policy": overtime_policy,
         "Rating": rating_values["review_rating"],
         "Salary & benefits": rating_values["review_salary"],
         "Training & learning": rating_values["review_training"],
