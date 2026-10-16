@@ -1,7 +1,135 @@
 import re
 import numpy as np
+import pandas as pd
 from pyvi import ViTokenizer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+from typing import Optional
+
+def clean_text(text: object, stop_words=None) -> str:
+    """
+    Chuẩn bị văn bản cho TF-IDF.
+
+    - Xử lý missing values và lowercase.
+    - Chuẩn hóa dấu nháy Unicode.
+    - Chuẩn hóa sở hữu cách: team's -> team.
+    - Giữ từ phủ định: don't, doesn't, can't...
+    - Chuẩn hóa từ ghép: back-end -> back_end.
+    - Giữ thuật ngữ: C, C++, C#, R&D, CI/CD, Node.js...
+    - Giữ các cụm từ quan trọng như:
+      C language, A to Z, Ho Chi Minh City.
+    - Loại stop words nhưng giữ từ phủ định và từ được bảo vệ.
+    """
+    if text is None or pd.isna(text):
+        return ""
+
+    text = str(text).lower()
+
+    # 1. Chuẩn hóa dấu nháy Unicode
+    text = re.sub(r"[\u2018\u2019\u02bc\u0060]", "'", text)
+
+    # 2. Bảo vệ một số cụm từ
+    protected_phrases = {
+        r"\ba\s+to\s+z\b": "a_to_z",
+        r"\bho\s+chi\s+minh\s+city\b": "ho_chi_minh_city",
+        r"\bviet\s+nam\b": "viet_nam"
+    }
+
+    for pattern, replacement in protected_phrases.items():
+        text = re.sub(pattern, replacement, text)
+
+    # 3. Chuẩn hóa ngôn ngữ C, không ảnh hưởng C++ và C#
+    text = re.sub(r"\bc(?:\s+language|[_-]language)?\b(?![+#])", "c_language", text)
+
+    # 4. Chuẩn hóa sở hữu cách: team's -> team; don't vẫn giữ nguyên.
+    text = re.sub(r"\b([a-z0-9_]+)'s\b", r"\1", text)
+
+    # 5. Chuẩn hóa từ ghép:back-end -> back_end; end-to-end -> end_to_end.
+    text = re.sub(r"(?<=\w)-(?=\w)", "_", text)
+
+    # 6. Chuẩn hóa khoảng trắng
+    text = re.sub(r"[\r\n\t]+", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+
+    # 7. Nhận diện thuật ngữ đặc biệt
+    special_terms = [
+        r"u\.s\.a\.",
+        r"u\.s\.",
+        r"asp\.net",
+        r"node\.js",
+        r"ci/cd",
+        r"r&d_ing",
+        r"r&d",
+        r"f&b",
+        r"p&g",
+        r"c\+\+",
+        r"c#",
+        r"\.net",
+    ]
+
+    special_terms.sort(key=len, reverse=True)               # Sắp xếp cụm dài trước để ưu tiên khớp cụm đầy đủ
+
+    pattern = (
+        r"(?<!\w)(?:"
+        + "|".join(special_terms)
+        + r")(?!\w)"
+        + r"|[a-z0-9]+(?:'[a-z]+)+"  # Contractions
+        + r"|[a-z0-9]+(?:_[a-z0-9]+)+"  # Cụm bảo vệ/từ ghép
+        + r"|\b[a-z0-9]+\b"  # Token thông thường
+    )
+
+    words = re.findall(pattern, text)
+
+    # 8. Stop words: mặc định dùng bộ tiếng Anh của sklearn
+    stop_words = stop_words or set(ENGLISH_STOP_WORDS)
+    stop_words = {word.lower() for word in stop_words}
+
+    # 9. Các token được bảo vệ
+    protected_tokens = {
+        "c_language",
+        "a_to_z",
+        "ho_chi_minh_city",
+        "c++",
+        "c#",
+        "r&d",
+        "r&d_ing",
+        "f&b",
+        "p&g",
+        "ci/cd",
+        "node.js",
+        "asp.net",
+        ".net",
+        "u.s.",
+        "u.s.a.",
+    }
+
+    # 10. Lọc stop words và token rác
+    tokens = [
+        word for word in words
+        if (
+            word not in stop_words
+            and not word.isdigit()
+        ) or word in protected_tokens
+    ]
+
+    return " ".join(tokens)
+
+
+def preprocess_dataframe(
+    df: pd.DataFrame,
+    text_column: str,
+    processed_column: str = "content_processed",
+    stop_words: Optional[set] = None
+) -> pd.DataFrame:
+    """Tạo cột text đã được preprocessing."""
+    result = df.copy()
+
+    result[processed_column] = result[text_column].apply(
+        lambda text: clean_text(text, stop_words)
+    )
+
+    return result
+
+
 
 # 1. Load từ điển tiếng Anh sang tiếng Việt (ví dụ: "good" -> "tốt")
 def load_english_dict(file_path):
