@@ -31,8 +31,8 @@ st.set_page_config(
 BASE_DIR = APP_DIR
 # SỬA 3: ưu tiên style.css của nhóm;
 # Bản cũ chỉ nạp style.css và im lặng bỏ qua khi thiếu, nên mọi class (itv-badge, spec-grid, ...) mất định dạng.
-CSS_FILE = next((p for p in (BASE_DIR / "style.css") if p.exists()), None)
-if CSS_FILE is not None:
+CSS_FILE = BASE_DIR / "style.css"
+if CSS_FILE.exists():
     st.markdown(f"<style>{CSS_FILE.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 else:
     st.warning("⚠️ Không tìm thấy `style.css` cạnh file app nên giao diện sẽ không có định dạng.")
