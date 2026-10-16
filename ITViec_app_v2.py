@@ -1,4 +1,6 @@
+import html
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -129,14 +131,48 @@ def parse_percent_value(value) -> float:
     return float(np.clip(num, 0, 100))
 
 
-def render_skills_badges(skills_val) -> str:
-    """Bóc tách chuỗi kỹ năng và sinh HTML badges đồng bộ."""
+# SỬA 9: dữ liệu "Our key skills" là các dòng cách nhau bằng xuống dòng, và dòng đầu thường là TIÊU ĐỀ mục
+# ("Our Key Skills", "Skills We Use", "Our Tech Stack", ...) chứ không phải kỹ năng. Bản cũ chỉ tách theo dấu phẩy,
+# nên cả chuỗi "Our Key Skills\nJava\nGames..." thành một badge và hiện cả tiêu đề.
+_SKILL_HEADING = re.compile(
+    r"(?i)^\W*(our|we|here\s+are|latest|skills?|key\s+skills?|tech(nology)?\s*stack|expertise|captions?)\b.*$"
+)
+# tiêu đề nằm GIỮA danh sách: kết thúc bằng dấu hai chấm hoặc bắt đầu bằng "Our ...", "What we ...", "Technologies we ..."
+_MID_HEADING = re.compile(r"(?i)(:\s*$)|^\W*(our|what\s+we|technolog\w*\s+we|here\s+are)\b")
+
+
+def parse_skills(skills_val):
+    """Trả về (danh sách kỹ năng thật, danh sách câu mô tả dài) sau khi bỏ dòng tiêu đề."""
     if pd.isna(skills_val) or not str(skills_val).strip():
-        return "Chưa cập nhật danh sách kỹ năng."
-    tokens = [s.strip() for s in str(skills_val).replace(";", ",").split(",") if s.strip()]
-    if not tokens:
-        return str(skills_val)
-    return " ".join([f'<span class="itv-badge itv-badge-blue" style="margin: 2px 3px;">{t}</span>' for t in tokens])
+        return [], []
+    lines = [ln.strip() for ln in str(skills_val).splitlines() if ln.strip()]
+    # bỏ dòng đầu nếu là tiêu đề mục (chỉ xét khi còn dòng khác phía sau)
+    if len(lines) > 1 and _SKILL_HEADING.match(lines[0]):
+        lines = lines[1:]
+    skills, notes, seen = [], [], set()
+    for ln in lines:
+        # tách theo dấu phẩy/chấm phẩy TRƯỚC, rồi mới xét độ dài từng mục (dòng "Donet, C#, Mobile, ..." là danh sách)
+        for tok in ln.replace(";", ",").split(","):
+            tok = tok.strip()
+            if not tok or _MID_HEADING.search(tok):
+                continue
+            if len(tok) > 40 or len(tok.split()) > 5:   # câu mô tả, không phải tên kỹ năng
+                notes.append(tok)
+            elif tok.lower() not in seen:
+                seen.add(tok.lower())
+                skills.append(tok)
+    return skills, notes
+
+
+def render_skills_badges(skills_val) -> str:
+    """Sinh HTML badges chỉ cho các kỹ năng thật (đã bỏ tiêu đề mục và các câu mô tả dài)."""
+    skills, notes = parse_skills(skills_val)
+    if not skills:
+        # không có kỹ năng ngắn nào: hiện câu mô tả (nếu có) dưới dạng chữ thường thay vì badge
+        return " ".join(notes[:2]) if notes else "Chưa cập nhật danh sách kỹ năng."
+    return " ".join(
+        f'<span class="itv-badge itv-badge-blue" style="margin: 2px 3px;">{html.escape(t)}</span>' for t in skills
+    )
 
 
 def render_spec_grid(company_data) -> str:
@@ -206,6 +242,17 @@ def render_company_overview_card(company):
             st.markdown(str(why_love).replace('\n', '<br>'), unsafe_allow_html=True)
 
 
+CHIP_CANDIDATES = ["Python", "Java", "React", "Data Analyst", "ReactJS", "Golang", "DevOps", "SQL", "AWS", ".NET", "PHP", "Android"]
+
+
+@st.cache_data
+def valid_suggestion_chips():
+    """SỬA 8: ứng viên nút gợi ý nào có ÍT NHẤT một token nằm trong từ vựng TF-IDF thì mới được hiện."""
+    analyzer = vectorizer.build_analyzer()          # cùng cách tách từ/viết thường như lúc tìm kiếm
+    vocab = vectorizer.vocabulary_
+    return [c for c in CHIP_CANDIDATES if any(t in vocab for t in analyzer(c))]
+
+
 def set_recommend_query(text):
     """SỬA 2: callback cho nút gợi ý nhanh; chạy trước rerun nên được phép đặt giá trị cho ô nhập."""
     st.session_state["recommend_user_input"] = text
@@ -257,7 +304,10 @@ def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top
     user_vector = vectorizer.transform([user_input])
     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
     indices, scores = get_top_k_indices_scores(similarities, top_k=top_n)
-    return build_recommendation_result(indices, scores, companies_df)
+    # SỬA 7: từ khóa không có trong từ vựng TF-IDF -> mọi độ tương đồng = 0 -> argsort luôn trả về CÙNG một danh sách
+    # (các công ty cuối bảng) với 0%, nên đổi từ khóa mà kết quả không đổi. Chỉ giữ công ty có độ tương đồng > 0.
+    keep = scores > 0
+    return build_recommendation_result(indices[keep], scores[keep], companies_df)
 
 
 def display_company_card(row):
@@ -838,9 +888,10 @@ elif selected_menu == "🎯 Tìm công ty tương đồng":
             with st.container(key="suggestion_chips"):
                 # SỬA 2: gán session_state sau khi text_input cùng key đã tạo gây StreamlitWidgetAlreadyInstantiatedError.
                 # Dùng on_click (callback chạy TRƯỚC khi script rerun) và không cần st.rerun().
-                chips = [("Python", "chip_python"), ("Data Analyst", "chip_da"),
-                         ("ReactJS", "chip_react"), ("Golang", "chip_golang")]
-                chip_cols = st.columns([0.8, 1.1, 0.8, 0.8, 4])
+                # SỬA 8: chỉ hiện nút có từ khóa nằm trong từ vựng TF-IDF của mô hình đang nạp (từ ngoài từ vựng
+                # cho độ tương đồng 0 với mọi công ty). Danh sách ứng viên xếp theo thứ tự ưu tiên, lấy tối đa 4.
+                chips = [(c, f"chip_{c.lower().replace(' ', '_')}") for c in valid_suggestion_chips()][:4]
+                chip_cols = st.columns([1] * len(chips) + [max(1, 6 - len(chips))])
                 for col, (label, key) in zip(chip_cols, chips):
                     with col:
                         st.button(label, key=key, on_click=set_recommend_query, args=(label,))
