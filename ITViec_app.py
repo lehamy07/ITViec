@@ -223,13 +223,14 @@ def build_recommendation_result(indices, scores, companies_df):
 
 def recommend_similar_company(company_id, companies_df, similarity_matrix, top_n=5):
     """Đề xuất các công ty tương tự công ty được chọn."""
-    matching = np.flatnonzero(mcompanies_df["id"].to_numpy() == company_id)
+    matching = np.flatnonzero(companies_df["id"].to_numpy() == company_id)
     if len(matching) == 0:
         return pd.DataFrame()
     company_index = matching[0]
     scores = np.asarray(similarity_matrix[company_index]).ravel()
     indices, scores = get_top_k_indices_scores(scores, query_index=company_index, top_k=top_n)
     return build_recommendation_result(indices, scores, companies_df)
+
 
 def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top_n=5):
     """Đề xuất công ty dựa trên nội dung tìm kiếm người dùng nhập."""
