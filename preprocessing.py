@@ -27,6 +27,15 @@ def clean_text(text: object, stop_words=None) -> str:
     # 1. Chuẩn hóa dấu nháy Unicode
     text = re.sub(r"[\u2018\u2019\u02bc\u0060]", "'", text)
 
+    # Loại bỏ contraction phổ biến
+    text = re.sub(
+        r"\b(?:"
+        r"i|you|we|they|he|she|it|that|there|who|what|"
+        r"here|how|where|when|why|let"
+        r")'(?:s|re|ve|ll|d|m|t)\b",
+        " ",
+        text
+    )
     # 2. Bảo vệ một số cụm từ
     protected_phrases = {
         r"\ba\s+to\s+z\b": "a_to_z",
