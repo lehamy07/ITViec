@@ -311,7 +311,7 @@ def recommend_similar_company(company_id, companies_df, similarity_matrix, top_n
     return build_recommendation_result(indices, scores, companies_df)
 
 
-# def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top_n=5):
+# # def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top_n=5):
 #     """Đề xuất công ty dựa trên nội dung tìm kiếm người dùng nhập."""
 #     if not isinstance(user_input, str) or not user_input.strip():
 #         return pd.DataFrame()
@@ -336,7 +336,8 @@ def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top
     user_vector = vectorizer.transform([processed_text])
     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
     indices, scores = get_top_k_indices_scores(similarities, top_k=top_n)
-    return build_recommendation_result(indices, scores, companies_df)
+    keep = scores > 0
+    return build_recommendation_result(indices[keep], scores[keep], companies_df)
 
 def display_company_card(row):
     """Hiển thị thẻ công ty kết quả đề xuất với phân cấp màu điểm số."""
