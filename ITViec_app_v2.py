@@ -10,8 +10,6 @@ import pandas as pd
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 
-from preprocessing import predict_with_class0_threshold, clean_text
-
 
 # SỬA 5: file này có thể nằm ở helps/ hoặc ở helps/ITViec/. Tự tìm thư mục chứa ITviec_models1 + preprocessing.py,
 # rồi chdir vào đó (preprocessing.py đọc "data/english-vnmese.txt" theo đường dẫn tương đối).
@@ -20,7 +18,7 @@ APP_DIR = _HERE if (_HERE / "ITviec_models1").exists() else _HERE / "ITViec"
 sys.path.insert(0, str(APP_DIR))
 os.chdir(APP_DIR)
 
-from preprocessing import prepare_data, predict_with_class0_threshold
+from preprocessing import prepare_data, predict_with_class0_threshold, clean_text
 
 # =========================================================
 # 1. CẤU HÌNH TRANG & NẠP CSS TẬP TRUNG
