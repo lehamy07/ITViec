@@ -311,6 +311,18 @@ def recommend_similar_company(company_id, companies_df, similarity_matrix, top_n
     return build_recommendation_result(indices, scores, companies_df)
 
 
+# def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top_n=5):
+#     """Đề xuất công ty dựa trên nội dung tìm kiếm người dùng nhập."""
+#     if not isinstance(user_input, str) or not user_input.strip():
+#         return pd.DataFrame()
+#     user_vector = vectorizer.transform([user_input])
+#     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
+#     indices, scores = get_top_k_indices_scores(similarities, top_k=top_n)
+#     # SỬA 7: từ khóa không có trong từ vựng TF-IDF -> mọi độ tương đồng = 0 -> argsort luôn trả về CÙNG một danh sách
+#     # (các công ty cuối bảng) với 0%, nên đổi từ khóa mà kết quả không đổi. Chỉ giữ công ty có độ tương đồng > 0.
+#     keep = scores > 0
+#     return build_recommendation_result(indices[keep], scores[keep], companies_df)
+
 def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top_n=5):
     """Đề xuất công ty dựa trên nội dung tìm kiếm người dùng nhập."""
     if not isinstance(user_input, str) or not user_input.strip():
@@ -318,10 +330,7 @@ def recommend_by_content(user_input, vectorizer, tfidf_matrix, companies_df, top
     user_vector = vectorizer.transform([user_input])
     similarities = cosine_similarity(user_vector, tfidf_matrix).flatten()
     indices, scores = get_top_k_indices_scores(similarities, top_k=top_n)
-    # SỬA 7: từ khóa không có trong từ vựng TF-IDF -> mọi độ tương đồng = 0 -> argsort luôn trả về CÙNG một danh sách
-    # (các công ty cuối bảng) với 0%, nên đổi từ khóa mà kết quả không đổi. Chỉ giữ công ty có độ tương đồng > 0.
-    keep = scores > 0
-    return build_recommendation_result(indices[keep], scores[keep], companies_df)
+    return build_recommendation_result(indices, scores, companies_df)
 
 
 def display_company_card(row):
