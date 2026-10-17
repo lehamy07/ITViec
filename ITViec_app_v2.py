@@ -1057,16 +1057,13 @@ elif selected_menu == "ℹ️ Giới thiệu dự án":
     with st.container(border=True, key="about_model_performance"):
         st.subheader("📈 Hiệu Năng Mô Hình Phân Loại (Model Performance)")
         b1, b2, b3, b4 = st.columns(4)
-        # SỬA 4 (CHƯA ĐỔI SỐ, CẦN KIỂM TRA LẠI): ba số dưới đây mâu thuẫn nhau: với Precision 79.38% và Recall 82.13%
-        # thì F1 phải là ≈ 80.7%, không phải 76.81% (ngược lại P=79.38%, F1=76.81% suy ra R ≈ 74.4%).
-        # Mô hình trên máy mỗi người khác nhau nên không tự sửa số được; hãy lấy lại P/R/F1 của lớp No
-        # từ notebook của mô hình đang dùng (đúng với ngưỡng trong file .pkl) rồi điền vào đây.
+        # SỬA 4 (CẬP NHẬP MỚI)
         with b1:
-            st.metric("Precision", "79.38%")
+            st.metric("Precision", "57.57%")
         with b2:
-            st.metric("Recall", "82.13%")
+            st.metric("Recall", "93.72%")
         with b3:
-            st.metric("F1-Score", "76.81%")
+            st.metric("F1-Score", "71.32%")
         with b4:
             st.metric("Ngưỡng Class 0", f"{clf_threshold:.2f}")
 
